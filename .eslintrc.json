@@ -1,30 +1,31 @@
 {
+    "extends": "@adiwajshing",
     "parserOptions": {
-        "ecmaVersion": 8
+        "sourceType": "module",
+        "project": "./tsconfig.json"
     },
-    "env": {
-        "es6": true,
-        "node": true
-    },
-    "extends": "eslint:recommended",
+    "ignorePatterns": ["src/Tests/*"],
     "rules": {
-        "quotes": "off",
-        "semi": [
-            "error",
-            "always"
-        ],
-        "no-console": "off",
-        "no-debugger": "off",
-        "no-unused-vars": [
-            "error",
+        "@typescript-eslint/no-explicit-any": [
+            "warn",
             {
-                "args": "none"
+                "ignoreRestArgs": true
             }
         ],
-        "no-constant-condition": [
-            "error",
+        "@typescript-eslint/no-inferrable-types": [
+            "warn"
+        ],
+        "@typescript-eslint/no-redundant-type-constituents": [
+            "warn"
+        ],
+        "@typescript-eslint/no-unnecessary-type-assertion": [
+            "warn"
+        ],
+        "no-restricted-syntax": [
+            "warn",
             {
-                "checkLoops": false
+                "selector": "TSEnumDeclaration",
+                "message": "Don't declare enums, use literals instead"
             }
         ]
     }
