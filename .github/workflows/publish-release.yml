@@ -69,7 +69,6 @@ jobs:
           GIIT_TOKEN: ${{ secrets.GIIT_TOKEN }}
         with:
           token: ${{ secrets.GIIT_TOKEN }}
-          tag: ${{ github.ref }}
           commitish: ${{ github.sha }}
           body: ${{ steps.generate_changelog.outputs.changelog }}
           draft: false

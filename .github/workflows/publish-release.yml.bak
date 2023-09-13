@@ -71,7 +71,6 @@ jobs:
           token: ${{ secrets.GIIT_TOKEN }}
           tag: ${{ github.ref }}
           commitish: ${{ github.sha }}
-          name: ${{ github.ref_name }}
           body: ${{ steps.generate_changelog.outputs.changelog }}
           draft: false
           prerelease: false
