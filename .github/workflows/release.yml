@@ -47,19 +47,11 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Generate Changelog
-        id: generate_changelog
-        run: |
-          changelog=$(npm run changelog:last --silent)
-          echo "changelog<<EOF" >> $GITHUB_OUTPUT
-          echo "${changelog}" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
       - name: Make Package
         run: npm pack
 
       - name: Rename Pack
-        run: mv *.tgz baileys.tgz
+        run: mv *.tgz @teamolduser/libsignal.tgz
 
       - name: Create Release
         uses: meeDamian/github-release@2.0
