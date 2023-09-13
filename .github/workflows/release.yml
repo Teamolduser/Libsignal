@@ -2,13 +2,10 @@ name: Release
 
 on:
   push:
-    tags:
-      - "v*"
-
-permissions: write-all
-
+    branches:
+      - master
 jobs:
-release:
+  release:
     name: Release
     runs-on: ubuntu-latest
     steps:
