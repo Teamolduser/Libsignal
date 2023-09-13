@@ -1,12 +1,15 @@
-name: Release
+name: Update Nightly
+
+permissions:
+  contents: write
 
 on:
   push:
     branches:
       - master
+
 jobs:
-  release:
-    name: Release
+  update-nightly:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -21,9 +24,6 @@ jobs:
         uses: actions/setup-node@v3.6.0
         with:
           node-version: 18.x
-          registry-url: "https://registry.npmjs.org"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -39,32 +39,41 @@ jobs:
 
       - name: Install Dependencies
         run: yarn
+
+      - name: Update version to alpha
+        run: yarn version --prerelease --preid=alpha --no-git --no-git-tag-version
+
+      - name: Build NPM package
+        run: yarn pack && mv whiskeysockets-baileys-*.tgz whiskeysockets-baileys-nightly.tgz
+
+      - name: Generate Changelog
+        id: generate_changelog
+        run: |
+          changelog=$(yarn run --silent changelog:preview)
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "${changelog}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Update Nightly TAG
+        uses: richardsimko/update-tag@v1
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: nightly
 
-      - name: Publish in NPM
-        run: yarn publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Make Package
-        run: npm pack
-
-      - name: Rename Pack
-        run: mv *.tgz libsignal.tgz
-
-      - name: Create Release
+      - name: Update Nightly Release
         uses: meeDamian/github-release@2.0
         env:
-          GIIT_TOKEN: ${{ secrets.GIIT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          token: ${{ secrets.GIIT_TOKEN }}
-          tag: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: nightly
           commitish: ${{ github.sha }}
-          name: ${{ github.ref_name }}
-          draft: true
+          name: Nightly Release
+          body: ${{ steps.generate_changelog.outputs.changelog }}
+          draft: false
           prerelease: true
           files: >
-            libsignal.tgz
+            whiskeysockets-baileys-nightly.tgz
           gzip: folders
           allow_override: true
