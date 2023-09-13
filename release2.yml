@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: 18
       - name: Install dependencies
-        run: npm ci
+        run: yarn
       - name: Release
         env:
           GIIT_TOKEN: ${{ secrets.GIIT_TOKEN }}
